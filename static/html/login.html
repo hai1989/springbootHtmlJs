@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <title>用户管理主页</title>
+  <script src="../js/jquery-3.4.1.min.js"></script>
+  <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <style>
+    .error {
+      color: red;
+      font-size: 10px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container" style="width: 50%;">
+    <div>
+      <h3 style="margin: 10% 35%;">用户登录</h3>
+    </div>
+    <form class="form-horizontal" id="loginForm">
+      <div class="form-group">
+        <label for="username" class="col-sm-2 control-label">用户名：</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="username"  name="userName" placeholder="请输入用户名" onfocus="focusUser()" onblur="bluerUser('username','用户姓名')">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="passwd" class="col-sm-2 control-label">密 码：</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="passwd" name="password" placeholder="请输入密码" onfocus="focusUser()" onblur="bluerUser('passwd','用户密码')">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <!-- <span><a href="./index.html">返回主页</a></span>
+          <span><a href="./register.html">去注册</a></span> -->
+          <span id="tip"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="button" class="btn btn-default" onclick="login()">登录</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function login() {
+      // console.log($("#loginForm").serialize());
+      // console.log(JSON.stringify($("#loginForm").serialize()));
+      $.ajax({
+        type: "post",
+        url: "http://localhost:8083/user/login",
+        contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+        // contentType:"application/json;charset=UTF-8",
+        dataType:"json",
+        data: $("#loginForm").serialize(),
+        // data: JSON.stringify({userName:"张三",password:"1234561"}),
+        success: function (data) {
+          // console.log(data);
+          if (data.code == 200) {
+            // console.log(data)
+            window.location.href = "./list.html";
+          }
+          else {
+            var tip = document.getElementById("tip");
+            tip.classList.add("error");
+            tip.innerText = "登录失败:" + data.message;
+            console.log(tip.innerText);
+          }
+        }
+      });
+    }
+
+    //用户--姓名和密码
+    function bluerUser(idStr,tipStr){
+      var userName = document.getElementById(idStr);
+      // console.log("------------"+userName.value)
+      if(userName.value==null||userName.value.length==0){
+        tip.classList.add("error");
+        tip.innerText=tipStr+"不能为空";
+      }
+      else if(userName.value.length<2){
+        tip.classList.add("error");
+        tip.innerText=tipStr+"长度不能小于2位";
+      }
+      else if(userName.value.length>30){
+        tip.classList.add("error");
+        tip.innerText=tipStr+"长度不能大于30位";
+      }
+    }
+
+    function focusUser() {
+      var tip = document.getElementById("tip");
+      tip.classList.remove("error");
+      tip.innerText = "";
+    }
+  </script>
+</body>
+
+</html>
